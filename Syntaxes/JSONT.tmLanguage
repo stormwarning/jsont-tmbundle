@@ -270,6 +270,12 @@
         </dict>
         <dict>
           <key>name</key>
+          <string>constant.numeric.jsont</string>
+          <key>match</key>
+          <string>\s[0-9]+</string>
+        </dict>
+        <dict>
+          <key>name</key>
           <string>string.unquoted.jsont</string>
           <key>match</key>
           <string>\s[a-zA-Z0-9_-]+\.?[a-zA-Z0-9_-]+</string>
@@ -284,13 +290,13 @@
           <key>name</key>
           <string>support.function.without-args.jsont.sqsp</string>
           <key>match</key>
-          <string>(activate-twitter-links|apply|comment(-link|-count|s)|count|date|height|html(attr|tag)|image-meta|item-classes|json-pretty|like-button|pluralize|product-(price|status)|safe|slugify|smartypants|social-button(\b|-inline)|timesince|url-encode|width)</string>
+          <string>(activate-twitter-links|apply|comment(-link|-count|s)|count|height|html(attr|tag)|image-meta|item-classes|json-pretty|like-button|product-(price|status)|safe|slugify|smartypants|social-button((?!\-)|-inline)|timesince|url-encode|width)</string>
         </dict>
         <dict>
           <key>name</key>
           <string>support.function.with-args.jsont.sqsp</string>
           <key>match</key>
-          <string>(video)</string>
+          <string>(date|pluralize|truncate|video)</string>
         </dict>
       </array>
   </dict>
