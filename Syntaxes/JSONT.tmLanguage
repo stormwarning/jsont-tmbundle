@@ -299,6 +299,7 @@
           <string>(date|pluralize|truncate|video)</string>
         </dict>
       </array>
+    </dict>
   </dict>
   <key>scopeName</key>
   <string>text.html.jsont</string>
@@ -306,3 +307,4 @@
   <key>uuid</key>
   <string>12f1ad07-29ae-4b1d-9a95-0712a46d5ec6</string>
 </dict>
+</plist>
