@@ -143,7 +143,7 @@
       <key>name</key>
       <string>constant.character.jsont</string>
       <key>match</key>
-      <string>(?<=\.)(space|tab|newline|meta-left|meta-right)</string>
+      <string>(?&lt;=\.)(space|tab|newline|meta-left|meta-right)</string>
     </dict>
 
     <key>directives</key>
@@ -154,19 +154,19 @@
           <key>name</key>
           <string>keyword.control.jsont</string>
           <key>match</key>
-          <string>(?<=\{\.)(section|repeated section|if|end)</string>
+          <string>(?&lt;=\{\.)(section|repeated section|if|end)</string>
         </dict>
         <dict>
           <key>name</key>
           <string>keyword.control.jsont</string>
           <key>match</key>
-          <string>(?<=\{\.)(or|alternates with)</string>
+          <string>(?&lt;=\{\.)(or|alternates with)</string>
         </dict>
         <dict>
           <key>name</key>
           <string>storage.type.jsont</string>
           <key>match</key>
-          <string>(?<=\{\.)var</string>
+          <string>(?&lt;=\{\.)var</string>
         </dict>
       </array>
     </dict>
@@ -179,19 +179,19 @@
           <key>name</key>
           <string>entity.name.function.jsont</string>
           <key>match</key>
-          <string>(?<=\{\.)Debug(?=\?)</string>
+          <string>(?&lt;=\{\.)Debug(?=\?)</string>
         </dict>
         <dict>
           <key>name</key>
           <string>entity.name.function.jsont.sqsp</string>
           <key>match</key>
-          <string>(?<=\{\.)(collection((?![a-z\-])|TypeNameEquals)|comments|disqus|equal|even((?![a-z\-])|t)|excerpt|external-link|folder|location|main-image|odd|plural|promote(map|embed|image|code|quote|twitter|link|video|foursquare|instagram|form)|singular|video)(?=\?)</string>
+          <string>(?&lt;=\{\.)(collection((?![a-z\-])|TypeNameEquals)|comments|disqus|equal|even((?![a-z\-])|t)|excerpt|external-link|folder|location|main-image|odd|plural|promote(map|embed|image|code|quote|twitter|link|video|foursquare|instagram|form)|singular|video)(?=\?)</string>
         </dict>
         <dict>
           <key>name</key>
           <string>keyword.control.jsont</string>
           <key>match</key>
-          <string>(?<=[a-zA-Z0-9_-])\?</string>
+          <string>(?&lt;=[a-zA-Z0-9_-])\?</string>
         </dict>
       </array>
     </dict>
@@ -210,13 +210,13 @@
           <key>name</key>
           <string>variable.other.jsont</string>
           <key>match</key>
-          <string>(?<=@)[a-zA-Z0-9_-]+(?=(\s|\||\.|\}))</string>
+          <string>(?&lt;=@)[a-zA-Z0-9_-]+(?=(\s|\||\.|\}))</string>
         </dict>
         <dict>
           <key>name</key>
           <string>string.quoted.jsont</string>
           <key>match</key>
-          <string>(?<=\s)\"[a-zA-Z0-9_-]+\"(?=\})</string>
+          <string>(?&lt;=\s)\"[a-zA-Z0-9_-]+\"(?=\})</string>
         </dict>
       </array>
     </dict>
