@@ -1,0 +1,111 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: HTML (JSON-T)
+scopeName: text.html.jsont
+fileTypes: [
+  block,
+  item,
+  list,
+  page,
+  region
+]
+uuid: 51987eb6-dcfd-4c22-bcee-373bf7aad1be
+
+patterns:
+-
+
+repository:
+  line-comments:
+  - name: comment.line.number-sign.jsont
+    begin: \{#
+    end: \}
+
+  block-comments:
+  - name: comment.block.jsont
+    begin: \{##BEGIN\}
+    end: \{##END\}
+
+  variables:
+  - name: meta.substitution.jsont
+    begin: \{(?!\.)
+    end: \}
+    patterns:
+    - include: '#cursor'
+    - include: '#definitions'
+    - include: '#squarespace'
+    - include: '#formatters'
+
+  constructs:
+  - name: meta.directive.jsont
+    begin: \{(\.)
+    beginCaptures:
+      '1': {name: punctuation.separator.jsont}
+    end: \}
+    patterns:
+    - include: '#constants'
+    - include: '#directives'
+    - include: '#predicates'
+    - include: '#cursor'
+    - include: '#definitions'
+    - include: '#squarespace'
+
+  constants:
+  - name: constant.character.jsont
+    match: (?<=\.)(space|tab|newline|meta-left|meta-right)
+
+  directives:
+    patterns:
+    - name: keyword.control.jsont
+      match: (?<=\{\.)(section|repeated section|if|end)
+    - name: keyword.control.jsont
+      match: (?<=\{\.)(or|alternates with)
+    - name: storage.type.jsont
+      match: (?<=\{\.)var
+
+  predicates:
+    patterns:
+    - name: entity.name.function.jsont
+      match: (?<=\\{\\.)Debug(?=\\?)
+    - name: entity.name.function.jsont.sqsp
+      match: (?<=\\{\\.)(collection((?![a-z\\-])|TypeNameEquals)|comments|disqus|equal|even((?![a-z\\-])|t)|excerpt|external-link|folder|index|location|main-image|odd|plural|promote(map|embed|image|code|quote|twitter|link|video|foursquare|instagram|form)|singular|video)(?=\\?)
+    - name: keyword.control.jsont
+      match: (?<=[a-zA-Z0-9_-])\\?
+
+  definitions:
+    patterns:
+    - name: punctuation.definition.variable.jsont
+      match: \\@(?=[a-zA-Z0-9_-]+)
+    - name: variable.other.jsont
+      match: (?<=@)[a-zA-Z0-9_-]+(?=(\\s|\\||\\.|\\}))
+    - name: string.quoted.jsont
+      match: (?<=\\s)\\"[a-zA-Z0-9_-]+\\"(?=\\})
+
+  cursor:
+  - name: support.class.jsont
+    match: (@((?=\\B)|index))
+
+  squarespace:
+    patterns:
+    - name: support.class.jsont.sqsp
+      match: (postItemInjectCode|squarespace((?!\\-)|-headers|-post-entry|-footers))
+    - comment: Squarespace object properties
+      name: support.constant.jsont.sqsp
+      match: \\b(main-content|page\\-(classes|id))\\b
+    - comment: Top-level Squarespace page objects
+      name: entity.name.function.jsont.sqsp
+      match: \\b(authenticatedAccount|calendarView|collection|empty(\\b|Folder)|items|shareButtons|shoppingCart|showCart|template|website(\\b|Settings))\\b
+
+  formatters:
+    patterns:
+    - name: punctuation.separator.formatter.jsont
+      match: \\|(?=\\w)
+    - name: constant.numeric.jsont
+      match: \\s[0-9]+
+    - name: string.unquoted.jsont
+      match: \\s[a-zA-Z0-9_-]+\\.?[a-zA-Z0-9_-]+
+    - name: support.function.without-args.jsont
+      match: (html((?![a-z\\-])|-attr-value)|json|js-string|raw|str|template-file|url-param-value)
+    - name: support.function.without-args.jsont.sqsp
+      match: (activate-twitter-links|apply|comment(-link|-count|s)|count|height|html(attr|tag)|image-meta|item-classes|json-pretty|like-button|product-(price|status)|safe|slugify|smartypants|social-button((?!\\-)|-inline)|timesince|url-encode|width)
+    - name: support.function.with-args.jsont.sqsp
+      match: (date|pluralize|truncate|video)
