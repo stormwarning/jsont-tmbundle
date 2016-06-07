@@ -1,0 +1,13 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: JSON (Squarespace)
+scopeName: source.json.jsont
+fileTypes: [
+  conf,
+  preset
+]
+uuid: ff1ce9f8-bdc5-4205-9513-671c03a61ea9
+
+patterns:
+- comment: Include JSON grammar for this filetype.
+  include: source.json
