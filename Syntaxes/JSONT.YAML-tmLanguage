@@ -12,7 +12,12 @@ fileTypes: [
 uuid: 51987eb6-dcfd-4c22-bcee-373bf7aad1be
 
 patterns:
--
+- comment: Include HTML grammar as a starting point.
+  include: text.html.basic
+- include: '#block-comments'
+- include: '#line-comments'
+- include: '#constructs'
+- include: '#variables'
 
 repository:
   line-comments:
