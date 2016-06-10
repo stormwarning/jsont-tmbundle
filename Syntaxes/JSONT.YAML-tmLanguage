@@ -21,17 +21,17 @@ patterns:
 
 repository:
   line-comments:
-  - name: comment.line.number-sign.jsont
+    name: comment.line.number-sign.jsont
     begin: \{#
     end: \}
 
   block-comments:
-  - name: comment.block.jsont
+    name: comment.block.jsont
     begin: \{##BEGIN\}
     end: \{##END\}
 
   variables:
-  - name: meta.substitution.jsont
+    name: meta.substitution.jsont
     begin: \{(?!\.)
     end: \}
     patterns:
@@ -41,7 +41,7 @@ repository:
     - include: '#formatters'
 
   constructs:
-  - name: meta.directive.jsont
+    name: meta.directive.jsont
     begin: \{(\.)
     beginCaptures:
       '1': {name: punctuation.separator.jsont}
@@ -55,7 +55,7 @@ repository:
     - include: '#squarespace'
 
   constants:
-  - name: constant.character.jsont
+    name: constant.character.jsont
     match: (?<=\.)(space|tab|newline|meta-left|meta-right)
 
   directives:
@@ -86,7 +86,7 @@ repository:
       match: (?<=\\s)\\"[a-zA-Z0-9_-]+\\"(?=\\})
 
   cursor:
-  - name: support.class.jsont
+    name: support.class.jsont
     match: (@((?=\\B)|index))
 
   squarespace:

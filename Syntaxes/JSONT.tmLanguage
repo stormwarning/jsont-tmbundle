@@ -40,80 +40,72 @@
 	<key>repository</key>
 	<dict>
 		<key>block-comments</key>
-		<array>
-			<dict>
-				<key>begin</key>
-				<string>\{##BEGIN\}</string>
-				<key>end</key>
-				<string>\{##END\}</string>
-				<key>name</key>
-				<string>comment.block.jsont</string>
-			</dict>
-		</array>
+		<dict>
+			<key>begin</key>
+			<string>\{##BEGIN\}</string>
+			<key>end</key>
+			<string>\{##END\}</string>
+			<key>name</key>
+			<string>comment.block.jsont</string>
+		</dict>
 		<key>constants</key>
-		<array>
-			<dict>
-				<key>match</key>
-				<string>(?&lt;=\.)(space|tab|newline|meta-left|meta-right)</string>
-				<key>name</key>
-				<string>constant.character.jsont</string>
-			</dict>
-		</array>
+		<dict>
+			<key>match</key>
+			<string>(?&lt;=\.)(space|tab|newline|meta-left|meta-right)</string>
+			<key>name</key>
+			<string>constant.character.jsont</string>
+		</dict>
 		<key>constructs</key>
-		<array>
+		<dict>
+			<key>begin</key>
+			<string>\{(\.)</string>
+			<key>beginCaptures</key>
 			<dict>
-				<key>begin</key>
-				<string>\{(\.)</string>
-				<key>beginCaptures</key>
+				<key>1</key>
 				<dict>
-					<key>1</key>
-					<dict>
-						<key>name</key>
-						<string>punctuation.separator.jsont</string>
-					</dict>
+					<key>name</key>
+					<string>punctuation.separator.jsont</string>
 				</dict>
-				<key>end</key>
-				<string>\}</string>
-				<key>name</key>
-				<string>meta.directive.jsont</string>
-				<key>patterns</key>
-				<array>
-					<dict>
-						<key>include</key>
-						<string>#constants</string>
-					</dict>
-					<dict>
-						<key>include</key>
-						<string>#directives</string>
-					</dict>
-					<dict>
-						<key>include</key>
-						<string>#predicates</string>
-					</dict>
-					<dict>
-						<key>include</key>
-						<string>#cursor</string>
-					</dict>
-					<dict>
-						<key>include</key>
-						<string>#definitions</string>
-					</dict>
-					<dict>
-						<key>include</key>
-						<string>#squarespace</string>
-					</dict>
-				</array>
 			</dict>
-		</array>
+			<key>end</key>
+			<string>\}</string>
+			<key>name</key>
+			<string>meta.directive.jsont</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#constants</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#directives</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#predicates</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#cursor</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#definitions</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#squarespace</string>
+				</dict>
+			</array>
+		</dict>
 		<key>cursor</key>
-		<array>
-			<dict>
-				<key>match</key>
-				<string>(@((?=\\B)|index))</string>
-				<key>name</key>
-				<string>support.class.jsont</string>
-			</dict>
-		</array>
+		<dict>
+			<key>match</key>
+			<string>(@((?=\\B)|index))</string>
+			<key>name</key>
+			<string>support.class.jsont</string>
+		</dict>
 		<key>definitions</key>
 		<dict>
 			<key>patterns</key>
@@ -205,16 +197,14 @@
 			</array>
 		</dict>
 		<key>line-comments</key>
-		<array>
-			<dict>
-				<key>begin</key>
-				<string>\{#</string>
-				<key>end</key>
-				<string>\}</string>
-				<key>name</key>
-				<string>comment.line.number-sign.jsont</string>
-			</dict>
-		</array>
+		<dict>
+			<key>begin</key>
+			<string>\{#</string>
+			<key>end</key>
+			<string>\}</string>
+			<key>name</key>
+			<string>comment.line.number-sign.jsont</string>
+		</dict>
 		<key>predicates</key>
 		<dict>
 			<key>patterns</key>
@@ -268,35 +258,33 @@
 			</array>
 		</dict>
 		<key>variables</key>
-		<array>
-			<dict>
-				<key>begin</key>
-				<string>\{(?!\.)</string>
-				<key>end</key>
-				<string>\}</string>
-				<key>name</key>
-				<string>meta.substitution.jsont</string>
-				<key>patterns</key>
-				<array>
-					<dict>
-						<key>include</key>
-						<string>#cursor</string>
-					</dict>
-					<dict>
-						<key>include</key>
-						<string>#definitions</string>
-					</dict>
-					<dict>
-						<key>include</key>
-						<string>#squarespace</string>
-					</dict>
-					<dict>
-						<key>include</key>
-						<string>#formatters</string>
-					</dict>
-				</array>
-			</dict>
-		</array>
+		<dict>
+			<key>begin</key>
+			<string>\{(?!\.)</string>
+			<key>end</key>
+			<string>\}</string>
+			<key>name</key>
+			<string>meta.substitution.jsont</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#cursor</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#definitions</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#squarespace</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#formatters</string>
+				</dict>
+			</array>
+		</dict>
 	</dict>
 	<key>scopeName</key>
 	<string>text.html.jsont</string>
