@@ -11,106 +11,299 @@ fileTypes: [
 ]
 uuid: 51987eb6-dcfd-4c22-bcee-373bf7aad1be
 
+injections:
+  'L: text.html.jsont':
+    patterns:
+    # - include: '#block-comments'
+    - include: '#line-comments'
+    # - include: '#constructs'
+    # - include: '#variables'
+    - include: '#directives'
+
 patterns:
 - comment: Include HTML grammar as a starting point.
+  scopeName: text.html
   include: text.html.basic
-- include: '#block-comments'
-- include: '#line-comments'
-- include: '#constructs'
-- include: '#variables'
+# - include: '#block-comments'
+# - include: '#line-comments'
+# - include: '#constructs'
+# - include: '#variables'
 
 repository:
   line-comments:
-    name: comment.line.number-sign.jsont
-    begin: \{#
-    end: \}
-
-  block-comments:
-    name: comment.block.jsont
-    begin: \{##BEGIN\}
-    end: \{##END\}
-
-  variables:
-    name: meta.substitution.jsont
-    begin: \{(?!\.)
-    end: \}
-    patterns:
-    - include: '#cursor'
-    - include: '#definitions'
-    - include: '#squarespace'
-    - include: '#formatters'
-
-  constructs:
-    name: meta.directive.jsont
-    begin: \{(\.)
+    begin: \{#(?!(?:#BEGIN|#END))
     beginCaptures:
-      '1': {name: punctuation.separator.jsont}
+      '0':
+        name: punctuation.definition.comment.begin.jsont
     end: \}
-    patterns:
-    - include: '#constants'
-    - include: '#directives'
-    - include: '#predicates'
-    - include: '#cursor'
-    - include: '#definitions'
-    - include: '#squarespace'
-
-  constants:
-    name: constant.character.jsont
-    match: (?<=\.)(space|tab|newline|meta-left|meta-right)
+    endCaptures:
+      '0':
+        name: punctuation.definition.comment.end.jsont
+    name: comment.line.number-sign.jsont
 
   directives:
+    begin: \{(?!#)
+    beginCaptures:
+      '0': 
+        name: punctuation.section.tag.jsont
+    end: \}
+    endCaptures:
+      '0':
+        name: punctuation.section.tag.jsont
+    # contentName: meta.tag.template.value.jsont
+    patterns:
+    - include: '#expressions'
+    - include: '#predicates'
+    - include: '#constants'
+    - include: '#objects'
+    - include: '#properties'
+    - include: '#definitions'
+    - include: '#formatters'
+    - include: '#formatters-wargs'
+    - include: '#operators'
+    - include: '#strings'
+
+  # variables:
+  #   name: meta.substitution.jsont
+  #   begin: \{(?!\.)
+  #   end: \}
+  #   patterns:
+  #   - include: '#cursor'
+  #   - include: '#definitions'
+  #   - include: '#squarespace'
+  #   - include: '#formatters'
+
+  # constructs:
+  #   patterns:
+  #   - include: '#constants'
+  #   - include: '#expressions'
+  #   - include: '#predicates'
+  #   - include: '#cursor'
+  #   - include: '#definitions'
+  #   - include: '#squarespace'
+
+  constants:
+    patterns:
+    - name: constant.character.jsont
+      match: \.(space|tab|newline|meta-left|meta-right)
+    - name: constant.language.jsont
+      match: (?i)(?<=[\s\[\(\{:,])(?:true|false|null|none)(?=[\s\)\]\}\,])
+    - name: constant.numeric.jsont
+      match: (?<=[\s\[\(\{:,]|\.\.|\*\*)[0-9]+(?:\.[0-9]+)?(?=[\s\)\]\}\,]|\.\.|\*\*)
+    - name: constant.other.jsont
+      match: \%[a-zA-Z\%]
+
+  expressions:
     patterns:
     - name: keyword.control.jsont
-      match: (?<=\{\.)(section|repeated section|if|end)
+      match: \.(section|repeated section|if|end)
     - name: keyword.control.jsont
-      match: (?<=\{\.)(or|alternates with)
+      match: \.(or|alternates with)
     - name: storage.type.jsont
-      match: (?<=\{\.)var
+      match: \.var
+    - include: '#constants'
+    - include: '#objects'
+    - include: '#properties'
+    - include: '#definitions'
+    - include: '#formatters-wargs'
+    - include: '#formatters'
+    - include: '#operators'
+    - include: '#strings'
 
   predicates:
     patterns:
-    - name: entity.name.function.jsont
-      match: (?<=\\{\\.)Debug(?=\\?)
-    - name: entity.name.function.jsont.sqsp
-      match: (?<=\\{\\.)(collection((?![a-z\\-])|TypeNameEquals)|comments|disqus|equal|even((?![a-z\\-])|t)|excerpt|external-link|folder|index|location|main-image|odd|plural|promote(map|embed|image|code|quote|twitter|link|video|foursquare|instagram|form)|singular|video)(?=\\?)
-    - name: keyword.control.jsont
-      match: (?<=[a-zA-Z0-9_-])\\?
+    - captures:
+        '1':
+          name: entity.name.function.jsont
+        '2':
+          name: keyword.control.jsont
+      match: ((?:\.|\.or\s)Debug)(\?)
+    - captures:
+        '1':
+          name: entity.name.function.jsont.sqsp
+        '2':
+          name: keyword.control.jsont.sqsp
+      match: ((?:\.|(?<=\.or\s))(?:collection(?:(?![a-z\\-])|TypeNameEquals)|comments|disqus|equal|even(?:(?![a-z\\-])|t)|excerpt|external-link|folder|index|location|main-image|odd|plural|promote(?:map|embed|image|code|quote|twitter|link|video|foursquare|instagram|form)|singular|video))(\?)
+    - include: '#constants'
+    - include: '#objects'
+    - include: '#properties'
+    - include: '#definitions'
+    - include: '#formatters-wargs'
+    - include: '#formatters'
+    - include: '#operators'
+    - include: '#strings'
 
   definitions:
     patterns:
+    - comment: Cursor
+      name: support.class.jsont
+      match: (@((?=\\B)|index))
     - name: punctuation.definition.variable.jsont
       match: \\@(?=[a-zA-Z0-9_-]+)
     - name: variable.other.jsont
       match: (?<=@)[a-zA-Z0-9_-]+(?=(\\s|\\||\\.|\\}))
-    - name: string.quoted.jsont
-      match: (?<=\\s)\\"[a-zA-Z0-9_-]+\\"(?=\\})
+    # - name: string.quoted.jsont
+    #   match: (?<=\\s)\\"[a-zA-Z0-9_-]+\\"(?=\\})
 
-  cursor:
-    name: support.class.jsont
-    match: (@((?=\\B)|index))
-
-  squarespace:
+  objects:
     patterns:
-    - name: support.class.jsont.sqsp
-      match: (postItemInjectCode|squarespace((?!\\-)|-headers|-post-entry|-footers))
-    - comment: Squarespace object properties
-      name: support.constant.jsont.sqsp
-      match: \\b(main-content|page\\-(classes|id))\\b
-    - comment: Top-level Squarespace page objects
-      name: entity.name.function.jsont.sqsp
-      match: \\b(authenticatedAccount|calendarView|collection|empty(\\b|Folder)|items|shareButtons|shoppingCart|showCart|template|website(\\b|Settings))\\b
+    - captures:
+        '1':
+          name: support.class.jsont.sqsp
+      match: (?<=[\s\{\[\(:,])(postItemInjectCode|squarespace((?!\\-)|-headers|-post-entry|-footers))(?=[\s\}\[\]\(\)\.\|,:])
+    - captures:
+        '1':
+          name: variable.other.jsont
+      match: (?<=[\s\{\[\(:,])([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)(?=[\s\}\[\]\(\)\.\|,:])
+
+  properties:
+    patterns:
+    - captures:
+        '1':
+          name: punctuation.separator.property.jsont
+        '2':
+          name: support.constant.jsont.sqsp
+      comment: Squarespace object properties
+      match: (?<=[a-zA-Z0-9_\x{7f}-\x{ff}])(\.)(main-content|page-(?:classes|id))(?=[\.\s\|\[\)\]\}:,])
+    - captures:
+        '1':
+          name: punctuation.separator.property.jsont
+        '2':
+          name: entity.name.function.jsont.sqsp
+      comment: Top-level Squarespace page objects
+      match: (?<=[a-zA-Z0-9_\x{7f}-\x{ff}])(\.)(authenticatedAccount|calendarView|collection|empty(\\b|Folder)|items|shareButtons|shoppingCart|showCart|template|website(\\b|Settings))(?=[\.\s\|\[\)\]\}:,])
+    - captures:
+        '1':
+          name: punctuation.separator.property.jsont
+        '2':
+          name: variable.other.property.jsont
+      match: (?<=[a-zA-Z0-9_\x{7f}-\x{ff}])(\.)([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)(?=[\.\s\|\[\)\]\}:,])
 
   formatters:
     patterns:
-    - name: punctuation.separator.formatter.jsont
-      match: \\|(?=\\w)
-    - name: constant.numeric.jsont
-      match: \\s[0-9]+
-    - name: string.unquoted.jsont
-      match: \\s[a-zA-Z0-9_-]+\\.?[a-zA-Z0-9_-]+
-    - name: support.function.without-args.jsont
-      match: (html((?![a-z\\-])|-attr-value)|json|js-string|raw|str|template-file|url-param-value)
-    - name: support.function.without-args.jsont.sqsp
-      match: (activate-twitter-links|apply|comment(-link|-count|s)|count|height|html(attr|tag)|image-meta|item-classes|json-pretty|like-button|product-(price|status)|safe|slugify|smartypants|social-button((?!\\-)|-inline)|timesince|url-encode|width)
-    - name: support.function.with-args.jsont.sqsp
-      match: (date|pluralize|truncate|video)
+    - captures:
+        '1':
+          name: support.function.without-args.jsont
+      match: (?<=[a-zA-Z0-9_\x{7f}-\x{ff}\]\)\\'\"@])(\|(?:html((?![a-z\-])|-attr-value)|json|js-string|raw|str|template-file|url-param-value))(?=[\s\|\]\}\):,]|\.\.|\*\*)
+    - captures:
+        '1':
+          name: support.function.without-args.jsont.sqsp
+      match: (?<=[a-zA-Z0-9_\x{7f}-\x{ff}\]\)\\'\"@])(\|(?:activate-twitter-links|comment(?:-link|-count|s)|count|height|html(?:attr|tag)|image-meta|item-classes|json-pretty|like-button|product-(?:price|status)|safe|slugify|smartypants|social-button(?:(?!\-)|-inline)|timesince|url-encode|width))(?=[\s\|\]\}\):,]|\.\.|\*\*)
+
+  formatters-wargs:
+  # 
+  # @TODO: Add \s and \/ as start & end punctuation.
+  # 
+    begin: (\|(?:apply|date|pluralize|truncate|video))((?:\s|\/))
+    beginCaptures:
+      '1':
+        name: support.function.with-args.jsont.sqsp
+      '2':
+        name: punctuation.definition.parameters.begin.jsont.sqsp
+    end: (?:\||(?!\}))
+    endCaptures:
+      '0':
+        name: punctuation.definition.parameters.end.jsont.sqsp
+    patterns:
+    # - include: '#constants'
+    - include: '#arguments'
+    contentName: meta.function.arguments.jsont.sqsp
+
+    # patterns:
+    # - captures:
+    #     '0':
+    #       name: support.function.with-args.jsont.sqsp
+    #   match: \|(date|pluralize|truncate|video)
+
+    # - name: string.unquoted.jsont
+    #   match: \\s[a-zA-Z0-9_-]+\\.?[a-zA-Z0-9_-]+
+
+  arguments:
+    patterns:
+    - captures:
+        '0':
+          name: string.unquoted.jsont
+      match: (?<=\s)([a-zA-Z0-9_\x{7f}-\x{ff}\.-]*)
+    # - captures:
+    #     '1':
+    #       name: string.unquoted.jsont
+    #     '2':
+    #       name: punctuation.separator.arguments.jsont
+    #   match: (?<=\/)([a-zA-Z0-9_\x{7f}-\x{ff}\.\s-]*)(\/?)
+
+  operators:
+    patterns:
+    # - captures:
+    #     '1':
+    #       name: keyword.operator.arithmetic.jsont
+    #   match: (\+|-|\*|/|%|//)
+    # - captures:
+    #     '1':
+    #       name: keyword.operator.assignment.jsont
+    #   match: (?<=\s)(=|~)(?=\s)
+    - captures:
+        '1':
+          name: keyword.operator.bitwise.jsont
+      match: (?<=\s)(&|\||\^)(?=\s)
+    - captures:
+        '1':
+          name: keyword.operator.comparison.jsont
+      match: (?<=\s)((?:!|=)=|<=?|>=?|i(?:s|n))(?=\s)
+    # - captures:
+    #     '1':
+    #       name: keyword.operator.logical.jsont
+    #   match: (?<=\s)(not|or|and|\?|:)(?=\s)
+    # - captures:
+    #     '0':
+    #       name: keyword.operator.arithmetic.jsont
+    #   match: (?<=[a-zA-Z0-9_\x{7f}-\x{ff}\]\)\'"])\*\*(?=[a-zA-Z0-9_\x{7f}-\x{ff}\'"])
+    # - captures:
+    #     '0':
+    #       name: keyword.operator.other.jsont
+    #   match: (?<=[a-zA-Z0-9_\x{7f}-\x{ff}\]\)\'"])\.\.(?=[a-zA-Z0-9_\x{7f}-\x{ff}\'"])
+    # - captures:
+    #     '0':
+    #       name: keyword.operator.other.jsont
+    #   match: (?<=[a-zA-Z0-9_\x{7f}-\x{ff}\]\}\)\'"])\|(?=[a-zA-Z_\x{7f}-\x{ff}])
+
+  strings:
+    patterns:
+    # - begin: (?:\s|\/)
+    #   beginCaptures:
+    #     '0':
+    #       name: punctuation.definition.string.begin.jsont
+    #   end: (?=(?:\/|\||\}))
+    #   endCaptures:
+    #     '0':
+    #       name: punctuation.definition.string.end.jsont
+    #   name: string.unquoted.jsont
+    # - captures:
+    #     '1':
+    #       name: punctuation.separator.property.jsont
+    #     '2':
+    #       name: string.unquoted.jsont
+    #   match: (?<=apply|video|pluralize)((\s)([a-zA-Z0-9_\x{7f}-\x{ff}\.\s-]*)(?=[\s\|\}]))
+    # - captures:
+    #     '1':
+    #       name: punctuation.separator.property.jsont
+    #     '2':
+    #       name: string.unquoted.jsont
+    #   match: (?<=pluralize)(\/)([a-zA-Z0-9_\x{7f}-\x{ff}\s-]*)(?=[\/\|\}])
+    - begin: (?:(?<!\\\\)|(?<=\\\\\\\\))\'
+      beginCaptures:
+        '0':
+          name: punctuation.definition.string.begin.jsont
+      end: (?:(?<!\\\\)|(?<=\\\\\\\\))\'
+      endCaptures:
+        '0':
+          name: punctuation.definition.string.end.jsont
+      name: string.quoted.single.jsont
+    - begin: (?:(?<!\\\\)|(?<=\\\\\\\\))"
+      beginCaptures:
+        '0':
+          name: punctuation.definition.string.begin.jsont
+      end: (?:(?<!\\\\)|(?<=\\\\\\\\))"
+      endCaptures:
+        '0':
+          name: punctuation.definition.string.end.jsont
+      name: string.quoted.double.jsont

@@ -10,6 +10,23 @@
 		<string>page</string>
 		<string>region</string>
 	</array>
+	<key>injections</key>
+	<dict>
+		<key>L: text.html.jsont</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#line-comments</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#directives</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 	<key>name</key>
 	<string>HTML (JSON-T)</string>
 	<key>patterns</key>
@@ -19,97 +36,72 @@
 			<string>Include HTML grammar as a starting point.</string>
 			<key>include</key>
 			<string>text.html.basic</string>
-		</dict>
-		<dict>
-			<key>include</key>
-			<string>#block-comments</string>
-		</dict>
-		<dict>
-			<key>include</key>
-			<string>#line-comments</string>
-		</dict>
-		<dict>
-			<key>include</key>
-			<string>#constructs</string>
-		</dict>
-		<dict>
-			<key>include</key>
-			<string>#variables</string>
+			<key>scopeName</key>
+			<string>text.html</string>
 		</dict>
 	</array>
 	<key>repository</key>
 	<dict>
-		<key>block-comments</key>
+		<key>arguments</key>
 		<dict>
-			<key>begin</key>
-			<string>\{##BEGIN\}</string>
-			<key>end</key>
-			<string>\{##END\}</string>
-			<key>name</key>
-			<string>comment.block.jsont</string>
-		</dict>
-		<key>constants</key>
-		<dict>
-			<key>match</key>
-			<string>(?&lt;=\.)(space|tab|newline|meta-left|meta-right)</string>
-			<key>name</key>
-			<string>constant.character.jsont</string>
-		</dict>
-		<key>constructs</key>
-		<dict>
-			<key>begin</key>
-			<string>\{(\.)</string>
-			<key>beginCaptures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.separator.jsont</string>
-				</dict>
-			</dict>
-			<key>end</key>
-			<string>\}</string>
-			<key>name</key>
-			<string>meta.directive.jsont</string>
 			<key>patterns</key>
 			<array>
 				<dict>
-					<key>include</key>
-					<string>#constants</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#directives</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#predicates</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#cursor</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#definitions</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#squarespace</string>
+					<key>captures</key>
+					<dict>
+						<key>0</key>
+						<dict>
+							<key>name</key>
+							<string>string.unquoted.jsont</string>
+						</dict>
+					</dict>
+					<key>match</key>
+					<string>(?&lt;=\s)([a-zA-Z0-9_\x{7f}-\x{ff}\.-]*)</string>
 				</dict>
 			</array>
 		</dict>
-		<key>cursor</key>
+		<key>constants</key>
 		<dict>
-			<key>match</key>
-			<string>(@((?=\\B)|index))</string>
-			<key>name</key>
-			<string>support.class.jsont</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>match</key>
+					<string>\.(space|tab|newline|meta-left|meta-right)</string>
+					<key>name</key>
+					<string>constant.character.jsont</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>(?i)(?&lt;=[\s\[\(\{:,])(?:true|false|null|none)(?=[\s\)\]\}\,])</string>
+					<key>name</key>
+					<string>constant.language.jsont</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>(?&lt;=[\s\[\(\{:,]|\.\.|\*\*)[0-9]+(?:\.[0-9]+)?(?=[\s\)\]\}\,]|\.\.|\*\*)</string>
+					<key>name</key>
+					<string>constant.numeric.jsont</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>\%[a-zA-Z\%]</string>
+					<key>name</key>
+					<string>constant.other.jsont</string>
+				</dict>
+			</array>
 		</dict>
 		<key>definitions</key>
 		<dict>
 			<key>patterns</key>
 			<array>
+				<dict>
+					<key>comment</key>
+					<string>Cursor</string>
+					<key>match</key>
+					<string>(@((?=\\B)|index))</string>
+					<key>name</key>
+					<string>support.class.jsont</string>
+				</dict>
 				<dict>
 					<key>match</key>
 					<string>\\@(?=[a-zA-Z0-9_-]+)</string>
@@ -122,35 +114,127 @@
 					<key>name</key>
 					<string>variable.other.jsont</string>
 				</dict>
-				<dict>
-					<key>match</key>
-					<string>(?&lt;=\\s)\\"[a-zA-Z0-9_-]+\\"(?=\\})</string>
-					<key>name</key>
-					<string>string.quoted.jsont</string>
-				</dict>
 			</array>
 		</dict>
 		<key>directives</key>
+		<dict>
+			<key>begin</key>
+			<string>\{(?!#)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.section.tag.jsont</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.section.tag.jsont</string>
+				</dict>
+			</dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#expressions</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#predicates</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#constants</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#objects</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#properties</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#definitions</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#formatters</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#formatters-wargs</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#operators</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strings</string>
+				</dict>
+			</array>
+		</dict>
+		<key>expressions</key>
 		<dict>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>match</key>
-					<string>(?&lt;=\{\.)(section|repeated section|if|end)</string>
+					<string>\.(section|repeated section|if|end)</string>
 					<key>name</key>
 					<string>keyword.control.jsont</string>
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>(?&lt;=\{\.)(or|alternates with)</string>
+					<string>\.(or|alternates with)</string>
 					<key>name</key>
 					<string>keyword.control.jsont</string>
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>(?&lt;=\{\.)var</string>
+					<string>\.var</string>
 					<key>name</key>
 					<string>storage.type.jsont</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#constants</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#objects</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#properties</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#definitions</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#formatters-wargs</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#formatters</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#operators</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strings</string>
 				</dict>
 			</array>
 		</dict>
@@ -159,117 +243,202 @@
 			<key>patterns</key>
 			<array>
 				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>support.function.without-args.jsont</string>
+						</dict>
+					</dict>
 					<key>match</key>
-					<string>\\|(?=\\w)</string>
-					<key>name</key>
-					<string>punctuation.separator.formatter.jsont</string>
+					<string>(?&lt;=[a-zA-Z0-9_\x{7f}-\x{ff}\]\)\\'\"@])(\|(?:html((?![a-z\-])|-attr-value)|json|js-string|raw|str|template-file|url-param-value))(?=[\s\|\]\}\):,]|\.\.|\*\*)</string>
 				</dict>
 				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>support.function.without-args.jsont.sqsp</string>
+						</dict>
+					</dict>
 					<key>match</key>
-					<string>\\s[0-9]+</string>
-					<key>name</key>
-					<string>constant.numeric.jsont</string>
+					<string>(?&lt;=[a-zA-Z0-9_\x{7f}-\x{ff}\]\)\\'\"@])(\|(?:activate-twitter-links|comment(?:-link|-count|s)|count|height|html(?:attr|tag)|image-meta|item-classes|json-pretty|like-button|product-(?:price|status)|safe|slugify|smartypants|social-button(?:(?!\-)|-inline)|timesince|url-encode|width))(?=[\s\|\]\}\):,]|\.\.|\*\*)</string>
 				</dict>
+			</array>
+		</dict>
+		<key>formatters-wargs</key>
+		<dict>
+			<key>begin</key>
+			<string>(\|(?:apply|date|pluralize|truncate|video))((?:\s|\/))</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
 				<dict>
-					<key>match</key>
-					<string>\\s[a-zA-Z0-9_-]+\\.?[a-zA-Z0-9_-]+</string>
-					<key>name</key>
-					<string>string.unquoted.jsont</string>
-				</dict>
-				<dict>
-					<key>match</key>
-					<string>(html((?![a-z\\-])|-attr-value)|json|js-string|raw|str|template-file|url-param-value)</string>
-					<key>name</key>
-					<string>support.function.without-args.jsont</string>
-				</dict>
-				<dict>
-					<key>match</key>
-					<string>(activate-twitter-links|apply|comment(-link|-count|s)|count|height|html(attr|tag)|image-meta|item-classes|json-pretty|like-button|product-(price|status)|safe|slugify|smartypants|social-button((?!\\-)|-inline)|timesince|url-encode|width)</string>
-					<key>name</key>
-					<string>support.function.without-args.jsont.sqsp</string>
-				</dict>
-				<dict>
-					<key>match</key>
-					<string>(date|pluralize|truncate|video)</string>
 					<key>name</key>
 					<string>support.function.with-args.jsont.sqsp</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.parameters.begin.jsont.sqsp</string>
+				</dict>
+			</dict>
+			<key>contentName</key>
+			<string>meta.function.arguments.jsont.sqsp</string>
+			<key>end</key>
+			<string>(?:\||(?!\}))</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.parameters.end.jsont.sqsp</string>
+				</dict>
+			</dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#arguments</string>
 				</dict>
 			</array>
 		</dict>
 		<key>line-comments</key>
 		<dict>
 			<key>begin</key>
-			<string>\{#</string>
+			<string>\{#(?!(?:#BEGIN|#END))</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.comment.begin.jsont</string>
+				</dict>
+			</dict>
 			<key>end</key>
 			<string>\}</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.comment.end.jsont</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>comment.line.number-sign.jsont</string>
+		</dict>
+		<key>objects</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>support.class.jsont.sqsp</string>
+						</dict>
+					</dict>
+					<key>match</key>
+					<string>(?&lt;=[\s\{\[\(:,])(postItemInjectCode|squarespace((?!\\-)|-headers|-post-entry|-footers))(?=[\s\}\[\]\(\)\.\|,:])</string>
+				</dict>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>variable.other.jsont</string>
+						</dict>
+					</dict>
+					<key>match</key>
+					<string>(?&lt;=[\s\{\[\(:,])([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)(?=[\s\}\[\]\(\)\.\|,:])</string>
+				</dict>
+			</array>
+		</dict>
+		<key>operators</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>keyword.operator.bitwise.jsont</string>
+						</dict>
+					</dict>
+					<key>match</key>
+					<string>(?&lt;=\s)(&amp;|\||\^)(?=\s)</string>
+				</dict>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>keyword.operator.comparison.jsont</string>
+						</dict>
+					</dict>
+					<key>match</key>
+					<string>(?&lt;=\s)((?:!|=)=|&lt;=?|&gt;=?|i(?:s|n))(?=\s)</string>
+				</dict>
+			</array>
 		</dict>
 		<key>predicates</key>
 		<dict>
 			<key>patterns</key>
 			<array>
 				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>entity.name.function.jsont</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>keyword.control.jsont</string>
+						</dict>
+					</dict>
 					<key>match</key>
-					<string>(?&lt;=\\{\\.)Debug(?=\\?)</string>
-					<key>name</key>
-					<string>entity.name.function.jsont</string>
+					<string>((?:\.|\.or\s)Debug)(\?)</string>
 				</dict>
 				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>entity.name.function.jsont.sqsp</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>keyword.control.jsont.sqsp</string>
+						</dict>
+					</dict>
 					<key>match</key>
-					<string>(?&lt;=\\{\\.)(collection((?![a-z\\-])|TypeNameEquals)|comments|disqus|equal|even((?![a-z\\-])|t)|excerpt|external-link|folder|index|location|main-image|odd|plural|promote(map|embed|image|code|quote|twitter|link|video|foursquare|instagram|form)|singular|video)(?=\\?)</string>
-					<key>name</key>
-					<string>entity.name.function.jsont.sqsp</string>
+					<string>((?:\.|(?&lt;=\.or\s))(?:collection(?:(?![a-z\\-])|TypeNameEquals)|comments|disqus|equal|even(?:(?![a-z\\-])|t)|excerpt|external-link|folder|index|location|main-image|odd|plural|promote(?:map|embed|image|code|quote|twitter|link|video|foursquare|instagram|form)|singular|video))(\?)</string>
 				</dict>
-				<dict>
-					<key>match</key>
-					<string>(?&lt;=[a-zA-Z0-9_-])\\?</string>
-					<key>name</key>
-					<string>keyword.control.jsont</string>
-				</dict>
-			</array>
-		</dict>
-		<key>squarespace</key>
-		<dict>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>match</key>
-					<string>(postItemInjectCode|squarespace((?!\\-)|-headers|-post-entry|-footers))</string>
-					<key>name</key>
-					<string>support.class.jsont.sqsp</string>
-				</dict>
-				<dict>
-					<key>comment</key>
-					<string>Squarespace object properties</string>
-					<key>match</key>
-					<string>\\b(main-content|page\\-(classes|id))\\b</string>
-					<key>name</key>
-					<string>support.constant.jsont.sqsp</string>
-				</dict>
-				<dict>
-					<key>comment</key>
-					<string>Top-level Squarespace page objects</string>
-					<key>match</key>
-					<string>\\b(authenticatedAccount|calendarView|collection|empty(\\b|Folder)|items|shareButtons|shoppingCart|showCart|template|website(\\b|Settings))\\b</string>
-					<key>name</key>
-					<string>entity.name.function.jsont.sqsp</string>
-				</dict>
-			</array>
-		</dict>
-		<key>variables</key>
-		<dict>
-			<key>begin</key>
-			<string>\{(?!\.)</string>
-			<key>end</key>
-			<string>\}</string>
-			<key>name</key>
-			<string>meta.substitution.jsont</string>
-			<key>patterns</key>
-			<array>
 				<dict>
 					<key>include</key>
-					<string>#cursor</string>
+					<string>#constants</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#objects</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#properties</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -277,11 +446,134 @@
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#squarespace</string>
+					<string>#formatters-wargs</string>
 				</dict>
 				<dict>
 					<key>include</key>
 					<string>#formatters</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#operators</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strings</string>
+				</dict>
+			</array>
+		</dict>
+		<key>properties</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.separator.property.jsont</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>support.constant.jsont.sqsp</string>
+						</dict>
+					</dict>
+					<key>comment</key>
+					<string>Squarespace object properties</string>
+					<key>match</key>
+					<string>(?&lt;=[a-zA-Z0-9_\x{7f}-\x{ff}])(\.)(main-content|page-(?:classes|id))(?=[\.\s\|\[\)\]\}:,])</string>
+				</dict>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.separator.property.jsont</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>entity.name.function.jsont.sqsp</string>
+						</dict>
+					</dict>
+					<key>comment</key>
+					<string>Top-level Squarespace page objects</string>
+					<key>match</key>
+					<string>(?&lt;=[a-zA-Z0-9_\x{7f}-\x{ff}])(\.)(authenticatedAccount|calendarView|collection|empty(\\b|Folder)|items|shareButtons|shoppingCart|showCart|template|website(\\b|Settings))(?=[\.\s\|\[\)\]\}:,])</string>
+				</dict>
+				<dict>
+					<key>captures</key>
+					<dict>
+						<key>1</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.separator.property.jsont</string>
+						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>variable.other.property.jsont</string>
+						</dict>
+					</dict>
+					<key>match</key>
+					<string>(?&lt;=[a-zA-Z0-9_\x{7f}-\x{ff}])(\.)([a-zA-Z_\x{7f}-\x{ff}][a-zA-Z0-9_\x{7f}-\x{ff}]*)(?=[\.\s\|\[\)\]\}:,])</string>
+				</dict>
+			</array>
+		</dict>
+		<key>strings</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>begin</key>
+					<string>(?:(?&lt;!\\\\)|(?&lt;=\\\\\\\\))\'</string>
+					<key>beginCaptures</key>
+					<dict>
+						<key>0</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.string.begin.jsont</string>
+						</dict>
+					</dict>
+					<key>end</key>
+					<string>(?:(?&lt;!\\\\)|(?&lt;=\\\\\\\\))\'</string>
+					<key>endCaptures</key>
+					<dict>
+						<key>0</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.string.end.jsont</string>
+						</dict>
+					</dict>
+					<key>name</key>
+					<string>string.quoted.single.jsont</string>
+				</dict>
+				<dict>
+					<key>begin</key>
+					<string>(?:(?&lt;!\\\\)|(?&lt;=\\\\\\\\))"</string>
+					<key>beginCaptures</key>
+					<dict>
+						<key>0</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.string.begin.jsont</string>
+						</dict>
+					</dict>
+					<key>end</key>
+					<string>(?:(?&lt;!\\\\)|(?&lt;=\\\\\\\\))"</string>
+					<key>endCaptures</key>
+					<dict>
+						<key>0</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.string.end.jsont</string>
+						</dict>
+					</dict>
+					<key>name</key>
+					<string>string.quoted.double.jsont</string>
 				</dict>
 			</array>
 		</dict>
